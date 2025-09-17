@@ -4,6 +4,7 @@
 
 # HTML title tag content
 title = "taking-turns"
+base_path = "taking-turns"
 
 # include `assets` in web platform
 [web.resource]
