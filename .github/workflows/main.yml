@@ -1,0 +1,13 @@
+name: test and deploy
+on: [push]
+jobs:
+  texst:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Nix
+        uses: cachix/install-nix-action@v17
+      - name: test
+        run: nix develop --command cargo test
+      - name: Build release
+        run: nix develop --command dx bundle
