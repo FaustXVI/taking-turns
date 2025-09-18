@@ -1,12 +1,12 @@
 use chrono::NaiveDate;
 
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct DateRange {
     starting_date: NaiveDate,
     ending_date: NaiveDate,
 }
 
-#[derive(thiserror::Error, Debug)]
+#[derive(thiserror::Error, Debug, PartialEq, Eq, Clone)]
 pub enum DateRangeError {
     #[error("Wrong format for starting date {0}")]
     StartDateFormatWrong(String),
