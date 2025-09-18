@@ -12,7 +12,7 @@ pub fn App() -> Element {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
         h1{
-            "🎉 Taking turns ! 🎉"
+            "🦋 Taking turns ! 🦋"
         }
         DateRangeWidget {
             onchange: move |new_range|{
