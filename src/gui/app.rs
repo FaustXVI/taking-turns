@@ -1,10 +1,7 @@
-use std::time::SystemTime;
-use chrono::{DateTime, NaiveDate, Utc};
-use dioxus::logger::tracing;
+use chrono::{NaiveDate, Utc};
 use dioxus::prelude::*;
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
-
 
 #[component]
 pub fn App() -> Element {
