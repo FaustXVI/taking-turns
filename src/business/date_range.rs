@@ -1,4 +1,5 @@
-use chrono::NaiveDate;
+use chrono::{NaiveDate, TimeDelta};
+use std::ops::Add;
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct DateRange {
@@ -37,8 +38,50 @@ impl TryFrom<(&str, &str)> for DateRange {
     }
 }
 
+pub struct DateRangeIterator {
+    date_range: DateRange,
+    next_index: usize,
+}
+impl Iterator for DateRangeIterator {
+    type Item = NaiveDate;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let date = self.date_range.starting_date.add(TimeDelta::days(
+            self.next_index.try_into().expect("That's a big range !"),
+        ));
+        if date <= self.date_range.ending_date {
+            self.next_index += 1;
+            Some(date)
+        } else {
+            None
+        }
+    }
+}
+
+impl IntoIterator for &DateRange {
+    type Item = NaiveDate;
+    type IntoIter = DateRangeIterator;
+
+    fn into_iter(self) -> Self::IntoIter {
+        DateRangeIterator {
+            date_range: self.clone(),
+            next_index: 0,
+        }
+    }
+}
+
+#[cfg(test)]
+pub mod test_helpers {
+    use chrono::NaiveDate;
+
+    pub fn date_from(value: &str) -> NaiveDate {
+        NaiveDate::parse_from_str(value, "%Y-%m-%d").expect("Values from tests should be valid")
+    }
+}
+
 #[cfg(test)]
 mod date_range_should {
+    use crate::business::date_range::test_helpers::date_from;
     use crate::business::date_range::{DateRange, DateRangeError};
     use chrono::NaiveDate;
     use core::str::FromStr;
@@ -103,5 +146,19 @@ mod date_range_should {
                 eq(&ending_date)
             )))
         );
+    }
+
+    #[rstest]
+    fn can_be_iterated_over() {
+        let range: DateRange = ("2025-01-01", "2025-01-03").try_into().unwrap();
+        let dates: Vec<NaiveDate> = range.into_iter().collect();
+        assert_that!(
+            dates,
+            container_eq([
+                date_from("2025-01-01"),
+                date_from("2025-01-02"),
+                date_from("2025-01-03")
+            ])
+        )
     }
 }

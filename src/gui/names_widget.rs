@@ -1,11 +1,11 @@
-use crate::business::name::Name;
+use crate::business::name::{Name, Names};
 use dioxus::core_macro::{component, Props};
 use dioxus::dioxus_core::Element;
 use dioxus::prelude::*;
 
 #[derive(PartialEq, Clone, Props)]
 pub struct NamesWidgetProps {
-    onchange: EventHandler<Vec<Name>>,
+    onchange: EventHandler<Names>,
 }
 
 #[component]

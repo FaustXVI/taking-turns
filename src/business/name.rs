@@ -1,5 +1,7 @@
 use derive_more::with_trait::Display;
 
+pub type Names = Vec<Name>;
+
 #[derive(Debug, Eq, PartialEq, Clone, Display)]
 #[display("{_0}")]
 pub struct Name(String);
@@ -19,6 +21,20 @@ impl TryFrom<String> for Name {
             Err(NameError::EmptyName)
         } else {
             Ok(Name(value))
+        }
+    }
+}
+
+#[cfg(test)]
+pub mod test_helpers {
+    use crate::business::name::Name;
+
+    impl From<&str> for Name {
+        fn from(value: &str) -> Self {
+            value
+                .to_string()
+                .try_into()
+                .expect("Test values should be valid")
         }
     }
 }
