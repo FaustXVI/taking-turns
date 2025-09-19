@@ -11,6 +11,7 @@ dioxus = { version = "0.6.3", features = [] }
 chrono = { version = "0.4.42" }
 wasm-bindgen = "=0.2.100"
 thiserror = { version = "2.0.16" }
+derive_more = { version = "2.0.1", features = ["display"] }
 
 [dev-dependencies]
 rstest = { version = "0.26.1" }
