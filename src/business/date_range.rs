@@ -1,5 +1,4 @@
-use chrono::{NaiveDate, TimeDelta};
-use std::ops::Add;
+use chrono::NaiveDate;
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct DateRange {
@@ -15,6 +14,14 @@ pub enum DateRangeError {
     EndDateFormatWrong(String),
     #[error("Starting date {0} is after ending date {1}")]
     StartDateAfterEndDate(NaiveDate, NaiveDate),
+}
+
+impl DateRange {
+    pub fn iter_days(&self) -> impl Iterator<Item = NaiveDate> + '_ {
+        self.starting_date
+            .iter_days()
+            .take_while(|d| *d <= self.ending_date)
+    }
 }
 impl TryFrom<(&str, &str)> for DateRange {
     type Error = DateRangeError;
@@ -34,38 +41,6 @@ impl TryFrom<(&str, &str)> for DateRange {
                 starting_date,
                 ending_date,
             })
-        }
-    }
-}
-
-pub struct DateRangeIterator {
-    date_range: DateRange,
-    next_index: usize,
-}
-impl Iterator for DateRangeIterator {
-    type Item = NaiveDate;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let date = self.date_range.starting_date.add(TimeDelta::days(
-            self.next_index.try_into().expect("That's a big range !"),
-        ));
-        if date <= self.date_range.ending_date {
-            self.next_index += 1;
-            Some(date)
-        } else {
-            None
-        }
-    }
-}
-
-impl IntoIterator for &DateRange {
-    type Item = NaiveDate;
-    type IntoIter = DateRangeIterator;
-
-    fn into_iter(self) -> Self::IntoIter {
-        DateRangeIterator {
-            date_range: self.clone(),
-            next_index: 0,
         }
     }
 }
@@ -151,7 +126,7 @@ mod date_range_should {
     #[rstest]
     fn can_be_iterated_over() {
         let range: DateRange = ("2025-01-01", "2025-01-03").try_into().unwrap();
-        let dates: Vec<NaiveDate> = range.into_iter().collect();
+        let dates: Vec<NaiveDate> = range.iter_days().collect();
         assert_that!(
             dates,
             container_eq([

@@ -11,7 +11,7 @@ pub struct Affectation {
 
 pub fn create_affectations(names: Names, date_range: DateRange) -> Vec<Affectation> {
     date_range
-        .into_iter()
+        .iter_days()
         .zip(names.into_iter().cycle())
         .map(|(date, name)| Affectation { date, name })
         .collect()
