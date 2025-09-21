@@ -16,11 +16,16 @@ pub enum DateRangeError {
     StartDateAfterEndDate(NaiveDate, NaiveDate),
 }
 
-impl DateRange {
-    pub fn iter_days(&self) -> impl Iterator<Item = NaiveDate> + '_ {
+impl IntoIterator for DateRange {
+    type Item = NaiveDate;
+    type IntoIter = <Vec<NaiveDate> as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
         self.starting_date
             .iter_days()
             .take_while(|d| *d <= self.ending_date)
+            .collect::<Vec<_>>()
+            .into_iter()
     }
 }
 impl TryFrom<(&str, &str)> for DateRange {
@@ -126,7 +131,7 @@ mod date_range_should {
     #[rstest]
     fn can_be_iterated_over() {
         let range: DateRange = ("2025-01-01", "2025-01-03").try_into().unwrap();
-        let dates: Vec<NaiveDate> = range.iter_days().collect();
+        let dates: Vec<NaiveDate> = range.into_iter().collect();
         assert_that!(
             dates,
             container_eq([

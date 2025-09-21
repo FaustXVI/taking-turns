@@ -1,4 +1,3 @@
-use crate::business::date_range::DateRange;
 use crate::business::name::{Name, Names};
 use chrono::NaiveDate;
 
@@ -9,9 +8,12 @@ pub struct Affectation {
     pub name: Name,
 }
 
-pub fn create_affectations(names: Names, date_range: DateRange) -> Vec<Affectation> {
+pub fn create_affectations(
+    names: Names,
+    date_range: impl IntoIterator<Item = NaiveDate>,
+) -> Vec<Affectation> {
     date_range
-        .iter_days()
+        .into_iter()
         .zip(names.into_iter().cycle())
         .map(|(date, name)| Affectation { date, name })
         .collect()
@@ -21,6 +23,7 @@ pub fn create_affectations(names: Names, date_range: DateRange) -> Vec<Affectati
 mod affectation_system_should {
     use super::*;
     use crate::business::date_range::test_helpers::date_from;
+    use crate::business::date_range::DateRange;
     use googletest::assert_that;
     use googletest::prelude::container_eq;
     use rstest::rstest;
@@ -28,7 +31,7 @@ mod affectation_system_should {
     #[rstest]
     fn affect_first_name_to_first_date() {
         let names = vec!["Xavier".into()];
-        let date_range = ("2025-01-01", "2025-01-01").try_into().unwrap();
+        let date_range: DateRange = ("2025-01-01", "2025-01-01").try_into().unwrap();
         let affectations = create_affectations(names, date_range);
         assert_that!(
             affectations,
@@ -42,7 +45,7 @@ mod affectation_system_should {
     #[rstest]
     fn affect_a_name_to_each_dates_by_cycling_over_names() {
         let names = vec!["Xavier".into(), "Merve".into()];
-        let date_range = ("2025-01-01", "2025-01-03").try_into().unwrap();
+        let date_range: DateRange = ("2025-01-01", "2025-01-03").try_into().unwrap();
         let affectations = create_affectations(names, date_range);
         assert_that!(
             affectations,
