@@ -16,10 +16,6 @@ impl Default for WeekDayFilter {
 }
 
 impl WeekDayFilter {
-    pub fn removed_days(&self) -> Vec<Weekday> {
-        vec![Sat, Sun]
-    }
-
     pub fn accepted_days(&self) -> Vec<Weekday> {
         self.accepted_days.iter().copied().collect()
     }
@@ -39,7 +35,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         self.iterator
-            .find(|date| !self.filter.removed_days().contains(&date.weekday()))
+            .find(|date| self.filter.accepted_days().contains(&date.weekday()))
     }
 }
 

@@ -18,14 +18,14 @@ fn to_french(day: Weekday) -> &'static str {
 }
 #[component]
 pub fn WeekDayFilterWidget(weekday_filter: Signal<WeekDayFilter>) -> Element {
-    let filters = use_memo(move || weekday_filter().removed_days());
+    let filters = use_memo(move || weekday_filter().accepted_days());
     let days = [Mon, Tue, Wed, Thu, Fri, Sat, Sun];
     rsx! {
         for day in days{
             div{
                 input {
                     type: "checkbox",
-                    checked: !filters.read().contains(&day),
+                    checked: filters.read().contains(&day),
                     disabled: true
                 }
                 {to_french(day)}
