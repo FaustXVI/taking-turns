@@ -1,21 +1,31 @@
+use chrono::Weekday::*;
 use chrono::{Datelike, NaiveDate, Weekday};
+use std::collections::HashSet;
 
-#[derive(Debug, Copy, Clone)]
-pub struct WeekDayFilter {}
+#[derive(Debug, Clone)]
+pub struct WeekDayFilter {
+    accepted_days: HashSet<Weekday>,
+}
 
 impl Default for WeekDayFilter {
     fn default() -> Self {
-        WeekDayFilter {}
+        WeekDayFilter {
+            accepted_days: HashSet::from([Mon, Tue, Wed, Thu, Fri]),
+        }
     }
 }
 
 impl WeekDayFilter {
     pub fn removed_days(&self) -> Vec<Weekday> {
-        vec![Weekday::Sat, Weekday::Sun]
+        vec![Sat, Sun]
+    }
+
+    pub fn accepted_days(&self) -> Vec<Weekday> {
+        self.accepted_days.iter().copied().collect()
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub struct FilterByWeekDayIterator<I> {
     iterator: I,
     filter: WeekDayFilter,
@@ -37,30 +47,35 @@ pub trait FilterByWeekDays
 where
     Self: Sized,
 {
+    fn filter_by_weekday(self, day_filter: &WeekDayFilter) -> FilterByWeekDayIterator<Self>;
+}
+
+impl<T> FilterByWeekDays for T
+where
+    T: Iterator<Item = NaiveDate>,
+{
     fn filter_by_weekday(self, day_filter: &WeekDayFilter) -> FilterByWeekDayIterator<Self> {
         FilterByWeekDayIterator {
             iterator: self,
-            filter: *day_filter,
+            filter: day_filter.clone(),
         }
     }
 }
 
-impl<T> FilterByWeekDays for T where T: Iterator<Item = NaiveDate> {}
-
 #[cfg(test)]
 mod day_filter_should {
     use super::*;
-    use chrono::{NaiveDate, Weekday};
+    use chrono::NaiveDate;
     use googletest::assert_that;
-    use googletest::prelude::container_eq;
+    use googletest::matchers::*;
     use rstest::rstest;
 
     #[rstest]
     fn filter_out_weekend_days_by_default() {
         let filter = WeekDayFilter::default();
         assert_that!(
-            filter.removed_days(),
-            container_eq([Weekday::Sat, Weekday::Sun])
+            filter.accepted_days(),
+            unordered_elements_are![eq(&Mon), eq(&Tue), eq(&Wed), eq(&Thu), eq(&Fri)]
         )
     }
 
@@ -68,9 +83,9 @@ mod day_filter_should {
     fn can_be_used_to_filter_an_iterator() {
         let filter = WeekDayFilter::default();
         let dates = vec![
-            NaiveDate::from_isoywd_opt(2025, 2, Weekday::Fri).unwrap(),
-            NaiveDate::from_isoywd_opt(2025, 2, Weekday::Sat).unwrap(),
-            NaiveDate::from_isoywd_opt(2025, 2, Weekday::Sun).unwrap(),
+            NaiveDate::from_isoywd_opt(2025, 2, Fri).unwrap(),
+            NaiveDate::from_isoywd_opt(2025, 2, Sat).unwrap(),
+            NaiveDate::from_isoywd_opt(2025, 2, Sun).unwrap(),
         ];
 
         assert_that!(
@@ -78,7 +93,7 @@ mod day_filter_should {
                 .into_iter()
                 .filter_by_weekday(&filter)
                 .collect::<Vec<_>>(),
-            container_eq([NaiveDate::from_isoywd_opt(2025, 2, Weekday::Fri).unwrap()])
+            container_eq([NaiveDate::from_isoywd_opt(2025, 2, Fri).unwrap()])
         )
     }
 }
