@@ -1,6 +1,7 @@
 use crate::business::affectations::create_affectations;
 use crate::business::date_range::DateRange;
 use crate::business::name::Names;
+use crate::gui::affectations_widget::AffectationsWidget;
 use crate::gui::date_range_widget::DateRangeWidget;
 use crate::gui::names_widget::NamesWidget;
 use dioxus::prelude::*;
@@ -38,10 +39,8 @@ pub fn App() -> Element {
                 names.set(new_names)
             }
         }
-        for affectation in affectations.read().deref() {
-            div {
-                "{affectation}"
-            }
+        AffectationsWidget {
+            affectations: affectations.read().clone()
         }
     }
 }

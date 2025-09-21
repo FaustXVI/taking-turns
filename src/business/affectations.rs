@@ -2,7 +2,7 @@ use crate::business::date_range::DateRange;
 use crate::business::name::{Name, Names};
 use chrono::NaiveDate;
 
-#[derive(Debug, Eq, PartialEq, derive_more::Display)]
+#[derive(Debug, Eq, PartialEq, derive_more::Display, Clone)]
 #[display("{date}: {name}")]
 pub struct Affectation {
     pub date: NaiveDate,
