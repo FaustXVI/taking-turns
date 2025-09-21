@@ -19,6 +19,14 @@ impl WeekDayFilter {
     pub fn accepted_days(&self) -> Vec<Weekday> {
         self.accepted_days.iter().copied().collect()
     }
+
+    pub fn toggle(self, day: Weekday) -> WeekDayFilter {
+        let mut accepted_days = self.accepted_days;
+        if !accepted_days.remove(&day) {
+            accepted_days.insert(day);
+        }
+        WeekDayFilter { accepted_days }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -72,6 +80,26 @@ mod day_filter_should {
         assert_that!(
             filter.accepted_days(),
             unordered_elements_are![eq(&Mon), eq(&Tue), eq(&Wed), eq(&Thu), eq(&Fri)]
+        )
+    }
+
+    #[rstest]
+    fn can_toggle_out_a_day() {
+        let filter = WeekDayFilter::default();
+        let filter = filter.toggle(Mon);
+        assert_that!(
+            filter.accepted_days(),
+            unordered_elements_are![eq(&Tue), eq(&Wed), eq(&Thu), eq(&Fri)]
+        )
+    }
+
+    #[rstest]
+    fn can_toggle_in_a_day() {
+        let filter = WeekDayFilter::default();
+        let filter = filter.toggle(Sun);
+        assert_that!(
+            filter.accepted_days(),
+            unordered_elements_are![eq(&Mon), eq(&Tue), eq(&Wed), eq(&Thu), eq(&Fri), eq(&Sun)]
         )
     }
 

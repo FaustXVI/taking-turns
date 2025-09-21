@@ -26,7 +26,7 @@ pub fn WeekDayFilterWidget(weekday_filter: Signal<WeekDayFilter>) -> Element {
                 input {
                     type: "checkbox",
                     checked: filters.read().contains(&day),
-                    disabled: true
+                    onclick: move |_| weekday_filter.set(weekday_filter().toggle(day))
                 }
                 {to_french(day)}
             }
