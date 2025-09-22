@@ -16,7 +16,7 @@ pub fn DateRangeWidget(props: DateRangeWidgetProps) -> Element {
     let mut ending_date: Signal<String> = use_signal(|| Utc::now().date_naive().to_string());
     let range = use_memo(move || (starting_date().as_str(), ending_date().as_str()).try_into());
     let range_option = use_memo(move || range.read().clone().ok());
-    use_effect(move || props.onchange.call(range_option.read().clone()));
+    use_effect(move || props.onchange.call(*range_option.read()));
     rsx! {
         div{
             label { for:"starting_date", "Du"}

@@ -14,8 +14,8 @@ const MAIN_CSS: Asset = asset!("/assets/main.css");
 #[component]
 pub fn App() -> Element {
     let mut range: Signal<Option<DateRange>> = use_signal(|| None);
-    let mut names: Signal<Names> = use_signal(|| vec![]);
-    let weekday_filter: Signal<WeekDayFilter> = use_signal(|| WeekDayFilter::default());
+    let mut names: Signal<Names> = use_signal(Vec::default);
+    let weekday_filter: Signal<WeekDayFilter> = use_signal(WeekDayFilter::default);
     let affectations = use_memo(move || {
         if let Some(range) = range() {
             create_affectations(

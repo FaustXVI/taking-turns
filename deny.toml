@@ -1,0 +1,11 @@
+[licenses]
+allow = ["Apache-2.0", "MIT", "Unicode-3.0", "Zlib"]
+
+private = { ignore = true }
+
+[advisories]
+unmaintained = 'workspace'
+ignore = []
+
+[bans]
+multiple-versions = "allow"

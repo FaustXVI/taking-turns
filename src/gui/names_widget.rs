@@ -10,8 +10,8 @@ pub struct NamesWidgetProps {
 
 #[component]
 pub fn NamesWidget(props: NamesWidgetProps) -> Element {
-    let mut names: Signal<Vec<Name>> = use_signal(|| vec![]);
-    let new_name: Signal<String> = use_signal(|| "".to_string());
+    let mut names: Signal<Vec<Name>> = use_signal(Vec::default);
+    let new_name: Signal<String> = use_signal(String::default);
     use_effect(move || props.onchange.call(names.read().clone()));
     rsx! {
         div{

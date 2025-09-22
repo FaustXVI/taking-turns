@@ -1,5 +1,5 @@
 name: test and deploy
-on: [push]
+on: [ push ]
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
@@ -9,6 +9,8 @@ jobs:
         uses: cachix/install-nix-action@v17
       - name: test
         run: nix develop --command cargo test
+      - name: quality checks
+        run: nix flake check
       - name: Build release
         run: nix develop --command dx bundle
       - name: Upload static files as artifact
