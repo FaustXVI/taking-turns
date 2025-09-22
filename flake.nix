@@ -23,7 +23,7 @@
           inherit system overlays;
         };
 
-        craneLib = (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable."1.88.0".default.override {
+        craneLib = (crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable."1.86.0".default.override {
           extensions = [ "rust-src" "llvm-tools-preview" "clippy" "rustfmt" "cargo" ];
           targets = [ "x86_64-unknown-linux-gnu" "wasm32-unknown-unknown" ];
         });
