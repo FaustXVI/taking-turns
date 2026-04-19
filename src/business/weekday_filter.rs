@@ -10,7 +10,7 @@ pub struct WeekDayFilter {
 impl Default for WeekDayFilter {
     fn default() -> Self {
         WeekDayFilter {
-            accepted_days: HashSet::from([Mon, Tue,  Thu, Fri]),
+            accepted_days: HashSet::from([Mon, Tue, Thu, Fri]),
         }
     }
 }
@@ -99,7 +99,7 @@ mod day_filter_should {
         let filter = filter.toggle(Sun);
         assert_that!(
             filter.accepted_days(),
-            unordered_elements_are![eq(&Mon), eq(&Tue),  eq(&Thu), eq(&Fri), eq(&Sun)]
+            unordered_elements_are![eq(&Mon), eq(&Tue), eq(&Thu), eq(&Fri), eq(&Sun)]
         )
     }
 

@@ -11,7 +11,9 @@ use dioxus::prelude::*;
 pub fn ExcludedPeriodsWidget(excluded_period_filter: Signal<ExcludedPeriodsFilter>) -> Element {
     let mut current_exclusion: Signal<Option<DateRange>> = use_signal(|| None);
     let mut excluded: Signal<Vec<DateRange>> = use_signal(Vec::default);
-    use_effect(move || excluded_period_filter.set(ExcludedPeriodsFilter::from(excluded.read().clone())));
+    use_effect(move || {
+        excluded_period_filter.set(ExcludedPeriodsFilter::from(excluded.read().clone()))
+    });
     rsx! {
         for (i,range) in excluded.iter().enumerate() {
             div {
