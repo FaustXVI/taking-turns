@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-#[derive(Debug, Eq, PartialEq, Copy, Clone)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone, Hash)]
 pub struct DateRange {
     starting_date: NaiveDate,
     ending_date: NaiveDate,
@@ -14,6 +14,12 @@ pub enum DateRangeError {
     EndDateFormatWrong(String),
     #[error("Starting date {0} is after ending date {1}")]
     StartDateAfterEndDate(NaiveDate, NaiveDate),
+}
+
+impl DateRange {
+    pub fn contains(&self, date: &NaiveDate) -> bool {
+        self.starting_date <= *date && self.ending_date >= *date
+    }
 }
 
 impl IntoIterator for DateRange {
@@ -140,5 +146,12 @@ mod date_range_should {
                 date_from("2025-01-03")
             ])
         )
+    }
+
+    #[rstest]
+    fn can_check_if_a_date_is_included() {
+        let range: DateRange = ("2025-01-01", "2025-01-03").try_into().unwrap();
+        assert_that!(range.contains(&date_from("2025-01-02")), is_true());
+        assert_that!(range.contains(&date_from("2025-01-04")), is_false());
     }
 }
