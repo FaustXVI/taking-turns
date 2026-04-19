@@ -1,16 +1,24 @@
 use crate::business::date_range::DateRange;
 use chrono::NaiveDate;
-use std::collections::HashSet;
+use std::collections::{BTreeSet, HashSet};
 
 #[derive(Debug, Clone)]
 pub struct ExcludedPeriodsFilter {
-    excluded_periods: HashSet<DateRange>,
+    excluded_periods: BTreeSet<DateRange>,
 }
 
 impl Default for ExcludedPeriodsFilter {
     fn default() -> Self {
         ExcludedPeriodsFilter {
-            excluded_periods: HashSet::from([]),
+            excluded_periods: BTreeSet::from([]),
+        }
+    }
+}
+
+impl From<Vec<DateRange>> for ExcludedPeriodsFilter {
+    fn from(value: Vec<DateRange>) -> Self {
+        ExcludedPeriodsFilter {
+            excluded_periods: BTreeSet::from_iter(value.into_iter()),
         }
     }
 }

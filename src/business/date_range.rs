@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-#[derive(Debug, Eq, PartialEq, Copy, Clone, Hash)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone, Hash, Ord, PartialOrd)]
 pub struct DateRange {
     starting_date: NaiveDate,
     ending_date: NaiveDate,
@@ -19,6 +19,13 @@ pub enum DateRangeError {
 impl DateRange {
     pub fn contains(&self, date: &NaiveDate) -> bool {
         self.starting_date <= *date && self.ending_date >= *date
+    }
+
+    pub fn starting_date(&self) -> NaiveDate {
+        self.starting_date.clone()
+    }
+    pub fn ending_date(&self) -> NaiveDate {
+        self.ending_date.clone()
     }
 }
 

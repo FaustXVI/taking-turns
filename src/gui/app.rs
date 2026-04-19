@@ -7,6 +7,8 @@ use crate::gui::date_range_widget::DateRangeWidget;
 use crate::gui::names_widget::NamesWidget;
 use crate::gui::weekday_filter_widget::WeekDayFilterWidget;
 use dioxus::prelude::*;
+use crate::business::excluded_period_filter::{ExcludedPeriodsFilter, ExcludePeriods};
+use crate::gui::excluded_periods::ExcludedPeriodsWidget;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -16,11 +18,14 @@ pub fn App() -> Element {
     let mut range: Signal<Option<DateRange>> = use_signal(|| None);
     let mut names: Signal<Names> = use_signal(Vec::default);
     let weekday_filter: Signal<WeekDayFilter> = use_signal(WeekDayFilter::default);
+    let excluded_period_filter: Signal<ExcludedPeriodsFilter> = use_signal(ExcludedPeriodsFilter::default);
     let affectations = use_memo(move || {
         if let Some(range) = range() {
             create_affectations(
                 names(),
-                range.into_iter().filter_by_weekday(&weekday_filter()),
+                range.into_iter()
+                    .filter_by_weekday(&weekday_filter())
+                    .exclude_period(&excluded_period_filter()),
             )
         } else {
             vec![]
@@ -37,6 +42,10 @@ pub fn App() -> Element {
             onchange: move |new_range|{
                 range.set(new_range);
             }
+        }
+
+        ExcludedPeriodsWidget {
+            excluded_period_filter:excluded_period_filter
         }
 
         WeekDayFilterWidget{
