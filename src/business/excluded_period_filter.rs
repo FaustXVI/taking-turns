@@ -1,6 +1,6 @@
 use crate::business::date_range::DateRange;
 use chrono::NaiveDate;
-use std::collections::{BTreeSet, HashSet};
+use std::collections::BTreeSet;
 
 #[derive(Debug, Clone)]
 pub struct ExcludedPeriodsFilter {
@@ -18,13 +18,13 @@ impl Default for ExcludedPeriodsFilter {
 impl From<Vec<DateRange>> for ExcludedPeriodsFilter {
     fn from(value: Vec<DateRange>) -> Self {
         ExcludedPeriodsFilter {
-            excluded_periods: BTreeSet::from_iter(value.into_iter()),
+            excluded_periods: BTreeSet::from_iter(value),
         }
     }
 }
 
 impl ExcludedPeriodsFilter {
-    pub fn add(self, period: DateRange) -> Self {
+    pub fn insert(self, period: DateRange) -> Self {
         let mut excluded_periods = self.excluded_periods;
         excluded_periods.insert(period);
         Self { excluded_periods }
@@ -55,7 +55,7 @@ where
                 .filter
                 .excluded_periods
                 .iter()
-                .any(|excluded| excluded.contains(&day))
+                .any(|excluded| excluded.contains(day))
         })
     }
 }
@@ -96,14 +96,14 @@ mod day_filter_should {
     #[rstest]
     fn can_add_a_period() {
         let filter = ExcludedPeriodsFilter::default();
-        let filter = filter.add(DateRange::try_from(("2025-01-01", "2025-01-01")).unwrap());
+        let filter = filter.insert(DateRange::try_from(("2025-01-01", "2025-01-01")).unwrap());
         assert_that!(filter.excluded_periods.len(), eq(1))
     }
 
     #[rstest]
     fn can_remove_a_period() {
         let filter = ExcludedPeriodsFilter::default();
-        let filter = filter.add(DateRange::try_from(("2025-01-01", "2025-01-01")).unwrap());
+        let filter = filter.insert(DateRange::try_from(("2025-01-01", "2025-01-01")).unwrap());
         let filter = filter.remove(&DateRange::try_from(("2025-01-01", "2025-01-01")).unwrap());
         assert_that!(filter.excluded_periods.len(), eq(0))
     }
@@ -111,7 +111,7 @@ mod day_filter_should {
     #[rstest]
     fn can_be_used_to_filter_an_iterator() {
         let filter = ExcludedPeriodsFilter::default();
-        let filter = filter.add(DateRange::try_from(("2025-01-09", "2025-01-11")).unwrap());
+        let filter = filter.insert(DateRange::try_from(("2025-01-09", "2025-01-11")).unwrap());
         let dates = vec![date_from("2025-01-06"), date_from("2025-01-10")];
 
         assert_that!(

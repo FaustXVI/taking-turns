@@ -22,10 +22,10 @@ impl DateRange {
     }
 
     pub fn starting_date(&self) -> NaiveDate {
-        self.starting_date.clone()
+        self.starting_date
     }
     pub fn ending_date(&self) -> NaiveDate {
-        self.ending_date.clone()
+        self.ending_date
     }
 }
 

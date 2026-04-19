@@ -1,10 +1,8 @@
 use crate::business::date_range::DateRange;
 use crate::business::excluded_period_filter::ExcludedPeriodsFilter;
-use crate::business::name::{Name, Names};
 use crate::gui::date_range_widget::DateRangeWidget;
 use dioxus::core_macro::{component, Props};
 use dioxus::dioxus_core::Element;
-use dioxus::html::completions::CompleteWithBraces::form;
 use dioxus::prelude::*;
 
 #[component]
@@ -17,7 +15,7 @@ pub fn ExcludedPeriodsWidget(excluded_period_filter: Signal<ExcludedPeriodsFilte
     rsx! {
         for (i,range) in excluded.iter().enumerate() {
             div {
-                {format!("sauf du {} au {}", range.starting_date().format("%d/%m/%Y").to_string(), range.ending_date().format("%d/%m/%Y").to_string())}
+                {format!("sauf du {} au {}", range.starting_date().format("%d/%m/%Y"), range.ending_date().format("%d/%m/%Y"))}
                 " "
                 button {
                 onclick:  move |_| {
@@ -39,7 +37,7 @@ pub fn ExcludedPeriodsWidget(excluded_period_filter: Signal<ExcludedPeriodsFilte
         }
             button {
                 onclick: move |_| {
-                    if let Some(range) = current_exclusion.read().clone() {
+                    if let Some(range) = *current_exclusion.read() {
                     excluded.with_mut(move |v| v.push(range))
                     }
                 },
